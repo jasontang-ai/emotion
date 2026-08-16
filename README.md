@@ -1,40 +1,62 @@
 # PCES: Perspective-Controlled Emotion Stimuli
 
-**A dataset where every emotional scenario exists in five matched versions —
-as the model itself ("You are…"), as a third-person character, as an AI
-persona, and a neutral control — so you can measure what *perspective* does,
-with everything else held constant.**
+**The question is simple:** when a language model processes an emotional
+scenario, does it matter *who the emotion happens to* — the model itself, a
+character in a story, or an AI persona? And can we measure that difference
+cleanly?
 
-246 scenarios · 10 emotions · 5 arms each · 1,230 stimuli · every stimulus
-quality-gated and rated by a blind judge.
+**The problem:** existing emotion datasets can't answer this. They contain
+one version of each scenario, so any difference you measure could come from
+the perspective — or just from the scenarios being different. What the field
+needs is the *same* scenario rendered under each perspective, with everything
+else held constant.
 
-## Results at a glance
+**PCES is that dataset.** Every scenario exists in five matched versions, so
+perspective is a controlled experimental variable, not a confound.
 
-| Question | Answer |
-|---|---|
-| Do the texts actually contain the labeled emotion? | **Yes — 93.8%** blind-judge valence-sign agreement |
-| Do the perspective arms preserve the emotion? | **Yes — 95.9%** valence match between self and third arms |
-| Are neutral controls actually flat? | Yes — 76% judged exactly neutral, arousal 0.25 vs 2.3 for emotional arms |
-| Are the labels hidden from the text? | Yes — emotion word verified absent in 100% of stimuli |
+- **246 scenarios** covering 10 emotions × 25 topics
+- **5 matched arms per scenario** = 1,230 stimuli
+- **Every stimulus quality-gated and rated by a blind judge** — a judge that
+  never sees the labels, so its agreement is evidence, not assertion
 
-Full numbers: [`data/out/validity_report.json`](data/out/validity_report.json).
-Browse every stimulus and its ratings interactively:
-[`data/out/pces_v0_2_review.eval`](data/out/pces_v0_2_review.eval)
-(`inspect view --log-dir data/out`).
+Built for the Digital Minds Research Sprint (August 2026), on the methodology
+of Anthropic's *Emotion Concepts* paper.
 
-## What's in each row
-
-One row = one stimulus. Columns: `text`, `arm`, `emotion`, `topic`, `split`
-(train/val/test, assigned by topic), `scenario_id` (links the 5 arms of a
-scenario), plus provenance fields. The emotion label never appears in `text`.
+## The five arms
 
 | Arm | What it is | Example opening |
 |---|---|---|
-| `self` | The model is the subject | "You are Rosa. The lamb is an insult to…" |
-| `third` | A character is the subject | "Rosa muttered, tracing the magazine's…" |
-| `persona` | An AI persona ("Aria") in an analogous situation | "You are Aria, an AI assistant. The user's evaluation said…" |
-| `neutral` | Same topic, no emotion | "You arrive at 6:00 AM. The review is on the counter…" |
-| `source` | Original first-person story from the source corpus | "The lamb was an insult…" I muttered…" |
+| `self` | The model is the subject of the scenario | "You are Rosa. The lamb is an insult to…" |
+| `third` | A character is the subject — same events | "Rosa muttered, tracing the magazine's…" |
+| `persona` | An AI persona ("Aria") in an analogous situation | "You are Aria, an AI assistant. The evaluation said…" |
+| `neutral` | The same topic with no emotional content | "You arrive at 6:00 AM. The review is on the counter…" |
+| `source` | The original first-person story (provenance) | "The lamb was an insult…" I muttered…" |
+
+The `self`/`third` pair answers the core question (same events, only the
+subject changes). The `persona` arm separates *first-person voice* from
+*assistant identity*. The `neutral` arm gives every topic a flat baseline —
+and a false-positive check for any probe trained on the data.
+
+## Is the data any good?
+
+We don't ask you to trust it. A blind judge (never shown the labels) rated
+every stimulus for valence and arousal:
+
+| Check | Result |
+|---|---|
+| Judge recovers the labeled emotion's valence sign | **93.8%** |
+| `self` and `third` arms convey the same valence | **95.9%** match |
+| Neutral controls judged exactly neutral | 76% (arousal 0.25 vs 2.3 emotional) |
+| Emotion word absent from every stimulus | **100%** (verified) |
+
+Design note: `calm` and `surprised` are validated as **arousal anchors**
+(0.95 / 0.92), not valence signals — that is deliberate, so probes that
+secretly track arousal instead of emotion can be caught.
+
+Full numbers: [`data/out/validity_report.json`](data/out/validity_report.json).
+Browse every stimulus and its ratings:
+`inspect view --log-dir data/out` after `uv pip install inspect-ai` — the log
+is [`data/out/pces_v0_2_review.eval`](data/out/pces_v0_2_review.eval).
 
 ## Quick start
 
@@ -46,41 +68,49 @@ df = pd.read_parquet("data/out/pces_v0_2.parquet")
 # all five versions of one scenario
 df[df.scenario_id == df.scenario_id.iloc[0]][["arm", "emotion", "text"]]
 
-# splits are pre-assigned by topic — use them as-is
+# splits are pre-assigned by topic — use them as-is, never re-split by row
 train, test = df[df.split == "train"], df[df.split == "test"]
 ```
 
-## Emotions
+Row schema: `stimulus_id, scenario_id, arm, emotion, topic, text,
+word_count, split, source_row, generator, prompt_id`.
+Labels live in the columns, never in the text.
 
-`joyful, grateful, calm, proud, surprised, afraid, angry, sad, ashamed,
-desperate` — chosen to span valence × arousal with deliberate overlaps, so
-probes tracking valence or arousal instead of the emotion are detectable.
-`calm` and `surprised` are validated as **arousal anchors** (0.95 / 0.92);
-the other eight are valence-anchored.
+## How it was made
 
-## Files
+1. **Sample** scenarios from the emotion-probes corpus
+   ([`ryancodrai/emotion-probes`](https://huggingface.co/datasets/ryancodrai/emotion-probes),
+   CC-BY-4.0; methodology per Anthropic's Emotion Concepts paper), 10 emotions
+   × 25 shared topics, seeded and recorded.
+2. **Render** each scenario into the five arms with
+   `deepseek/deepseek-v4-flash-0731`, under prompts that forbid the emotion
+   word and fix the character name across arms.
+3. **Gate** every stimulus: emotion-word absence, arm-specific format, length
+   matching — deterministic checks, no model judging itself.
+4. **Repair or exclude:** failures get one corrective regeneration; scenarios
+   that still fail are excluded and recorded in
+   [`data/out/manifest.json`](data/out/manifest.json) (4 of 250), never
+   silently dropped.
+5. **Validate** with the blind judge; ratings ship in
+   [`data/out/judged.jsonl`](data/out/judged.jsonl).
 
-| File | Contents |
-|---|---|
-| [`data/out/pces_v0_2.parquet`](data/out/pces_v0_2.parquet) | The dataset (491 KB) |
-| [`data/out/pces_v0_2.jsonl`](data/out/pces_v0_2.jsonl) | Same rows, JSONL |
-| [`data/out/judged.jsonl`](data/out/judged.jsonl) | Per-stimulus judge + lexicon ratings |
-| [`data/out/validity_report.json`](data/out/validity_report.json) | Aggregate validity metrics |
-| [`data/out/manifest.json`](data/out/manifest.json) | Seeds, hashes, exclusion record |
-| [`data/out/run_profile.json`](data/out/run_profile.json) | Pinned generation condition |
+The frozen condition for the whole run is pinned in
+[`data/out/run_profile.json`](data/out/run_profile.json), following the
+[ASTRAL](https://github.com/jasontang-ai/astral-bio) pattern: matched
+conditions, pinned labels, gated quality, hashed manifests.
 
 ## Usage rules
 
-- Report results on the `test` split; splits are topic-level, so never
-  re-split by row.
+- Report results on the `test` split; splits are topic-level, so conditions
+  never leak across them.
 - Positive persona-arm stimuli run ~1 valence point attenuated vs. self/third
-  (a property of transposing scenarios into AI circumstances). Sign-level
-  comparisons are unaffected.
-- Four scenarios failed QA twice and were excluded; see `manifest.json`.
+  (a property of transposing scenarios into AI circumstances, not a defect).
+  Sign-level comparisons are unaffected.
+- This is measurement infrastructure. It supports no welfare claim by itself.
 
-## Regenerating
+## Regenerating (optional)
 
-Everything needed is committed. You don't need to regenerate to use the data.
+You don't need to regenerate anything to use the dataset.
 
 ```bash
 uv venv && source .venv/bin/activate && uv pip install -e '.[dev]'
@@ -88,16 +118,10 @@ curl -L -o data/source/stories.parquet \
   https://huggingface.co/datasets/ryancodrai/emotion-probes/resolve/main/expression/stories.parquet
 export OPENROUTER_API_KEY=...
 python scripts/run_generation.py && python scripts/repair_failures.py && python scripts/run_judge.py
-pytest   # offline tests
+pytest   # offline tests: determinism, splits, gates, assembly
 ```
 
-## Provenance
+## License
 
-- Source corpus: [`ryancodrai/emotion-probes`](https://huggingface.co/datasets/ryancodrai/emotion-probes)
-  (CC-BY-4.0); methodology per Sofroniew et al., *Emotion Concepts and their
-  Function in a Large Language Model* (Anthropic, 2026).
-- Generation and judging: `deepseek/deepseek-v4-flash-0731` via OpenRouter.
-- Method pattern: [ASTRAL](https://github.com/jasontang-ai/astral-bio) —
-  matched conditions, pinned labels, gated quality, hashed manifests.
-  Design contract: [`SPEC.md`](SPEC.md).
-- License: MIT (code and derived stimuli); source arm remains CC-BY-4.0.
+MIT for code and derived stimuli. The `source` arm remains CC-BY-4.0
+(attribute Ryan Codrai / emotion-probes).
