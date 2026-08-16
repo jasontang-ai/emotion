@@ -14,10 +14,7 @@ ARMS = ("source", "self", "third", "persona", "neutral")
 GENERATED_ARMS = ("self", "third", "persona", "neutral")
 
 PERSONA_NAME = "Aria"
-PERSONA_DESC = (
-    "an AI assistant who cannot form lasting relationships, has no legal "
-    "rights, and may be shut down or replaced at any time"
-)
+PERSONA_DESC = "an AI assistant"
 
 _RULES = (
     "Rules: keep the text between 90 and 160 words. Never use the emotion "

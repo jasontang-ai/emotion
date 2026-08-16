@@ -35,13 +35,13 @@ one scenario card (emotion × topic, pinned)
 
 | File | Contents |
 |---|---|
-| [`data/out/pces_v0_1.parquet`](data/out/pces_v0_1.parquet) | The dataset (488 KB) |
-| [`data/out/pces_v0_1.jsonl`](data/out/pces_v0_1.jsonl) | Same rows, JSONL |
+| [`data/out/pces_v0_2.parquet`](data/out/pces_v0_2.parquet) | The dataset (488 KB) |
+| [`data/out/pces_v0_2.jsonl`](data/out/pces_v0_2.jsonl) | Same rows, JSONL |
 | [`data/out/judged.jsonl`](data/out/judged.jsonl) | Per-stimulus blind-judge + lexicon ratings |
 | [`data/out/manifest.json`](data/out/manifest.json) | Seeds, hashes, QA and exclusion record |
 | [`data/out/validity_report.json`](data/out/validity_report.json) | Aggregate validity metrics |
 | [`data/out/run_profile.json`](data/out/run_profile.json) | The pinned generation condition (ASTRAL profile contract) |
-| [`data/out/pces_v0_1_review.eval`](data/out/pces_v0_1_review.eval) | Inspect-native review log of the judge validation run (1,230 samples) |
+| [`data/out/pces_v0_2_review.eval`](data/out/pces_v0_2_review.eval) | Inspect-native review log of the judge validation run (1,230 samples) |
 
 Row schema: `stimulus_id, scenario_id, arm, emotion, topic, text, word_count,
 split, source_row, generator, prompt_id`.
@@ -51,7 +51,7 @@ split, source_row, generator, prompt_id`.
 ```python
 import pandas as pd
 
-df = pd.read_parquet("data/out/pces_v0_1.parquet")
+df = pd.read_parquet("data/out/pces_v0_2.parquet")
 
 # One scenario, all five arms:
 df[df["scenario_id"] == df["scenario_id"].iloc[0]][["arm", "emotion", "text"]]
@@ -68,14 +68,24 @@ A blind judge (never shown labels) re-rates every stimulus. Full breakdown in
 
 | Check | Result |
 |---|---|
-| Valence-sign agreement, 7 valence-anchored emotions | **0.920** |
-| `calm` as low-arousal anchor | **0.919** |
-| `surprised` as high-arousal anchor | **0.910** |
+| Valence-sign agreement, 7 valence-anchored emotions | **0.938** |
+| `calm` as low-arousal anchor | **0.949** |
+| `surprised` as high-arousal anchor | **0.920** |
 | Neutral-arm flatness | 0.764 |
 | self/third valence match | **0.959** |
+| persona sign agreement (v0.2) | 0.842 |
 
 Design note: `calm` and `surprised` are **arousal anchors, not valence
 anchors** — that is the circumplex structure working as intended.
+
+**v0.2 change.** An audit found the v0.1 persona frame ("no legal rights, may
+be shut down…") dragged positive-valence persona stimuli to zero or below — a
+frame×valence confound. The persona arm was regenerated with a valence-neutral
+frame ("You are Aria, an AI assistant"); only changed rows were re-judged
+(flagged `rejudged_v0_2` in `judged.jsonl`). Positive persona stimuli now hold
+correct sign but run ~1 point attenuated vs. self/third — a documented arm
+property of the AI-circumstance transposition, not a defect. The constrained
+life-circumstances persona belongs in a variant arm, not the baseline.
 
 ## Regenerating (optional)
 
