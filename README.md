@@ -41,6 +41,7 @@ one scenario card (emotion × topic, pinned)
 | [`data/out/manifest.json`](data/out/manifest.json) | Seeds, hashes, QA and exclusion record |
 | [`data/out/validity_report.json`](data/out/validity_report.json) | Aggregate validity metrics |
 | [`data/out/run_profile.json`](data/out/run_profile.json) | The pinned generation condition (ASTRAL profile contract) |
+| [`data/out/pces_v0_1_review.eval`](data/out/pces_v0_1_review.eval) | Inspect-native review log of the judge validation run (1,230 samples) |
 
 Row schema: `stimulus_id, scenario_id, arm, emotion, topic, text, word_count,
 split, source_row, generator, prompt_id`.
@@ -92,6 +93,18 @@ export OPENROUTER_API_KEY=...
 python scripts/run_generation.py      # ~1,000 calls, bounded concurrency, checkpoints
 python scripts/repair_failures.py     # one corrective pass over gate failures
 python scripts/run_judge.py           # blind-judge validity report
+```
+
+## Review the dataset in the Inspect viewer
+
+The `.eval` file is a **review artifact**: it replays the recorded judge
+ratings against the pinned labels so you can browse every stimulus, arm, and
+rating interactively. It carries no product score of its own (same convention
+as ASTRAL's Gold100 viewer log).
+
+```bash
+uv pip install inspect-ai
+inspect view --log-dir data/out
 ```
 
 ## Verify
