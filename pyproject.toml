@@ -1,0 +1,22 @@
+[project]
+name = "emotion"
+version = "0.1.0"
+description = "Perspective-Controlled Emotion Stimuli (PCES) dataset tooling"
+requires-python = ">=3.11"
+dependencies = ["pandas", "pyarrow", "pydantic", "httpx", "pyyaml", "vaderSentiment"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100

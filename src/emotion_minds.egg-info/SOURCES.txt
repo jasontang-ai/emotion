@@ -1,0 +1,13 @@
+pyproject.toml
+src/emotion/__init__.py
+src/emotion/arms.py
+src/emotion/cards.py
+src/emotion/dataset.py
+src/emotion/generate.py
+src/emotion/qa.py
+src/emotion.egg-info/PKG-INFO
+src/emotion.egg-info/SOURCES.txt
+src/emotion.egg-info/dependency_links.txt
+src/emotion.egg-info/requires.txt
+src/emotion.egg-info/top_level.txt
+tests/test_pces.py

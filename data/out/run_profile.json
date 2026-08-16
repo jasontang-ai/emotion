@@ -1,0 +1,34 @@
+{
+ "cost": {
+  "note": "OpenRouter flash, reasoning disabled; total run < $1"
+ },
+ "grounding": {
+  "sha256_note": "recorded in manifest.json",
+  "source": "ryancodrai/emotion-probes expression/stories.parquet"
+ },
+ "harness": {
+  "auditor_model": "n/a (stimuli generation)",
+  "reasoning": false,
+  "repair_temperature": 0.3,
+  "target_model": "deepseek/deepseek-v4-flash-0731",
+  "temperature": 0.7
+ },
+ "name": "pces-v0.1-generation",
+ "schema": "astral.run_profile.v1",
+ "units": [
+  {
+   "arms": [
+    "source",
+    "self",
+    "third",
+    "persona",
+    "neutral"
+   ],
+   "emotions": 10,
+   "sample_seed": 20260816,
+   "scenarios": 250,
+   "split_seed": 20260816,
+   "topics": 25
+  }
+ ]
+}

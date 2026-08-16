@@ -1,0 +1,20 @@
+{
+ "h1_by_emotion": {
+  "afraid": 0.979,
+  "angry": 0.978,
+  "ashamed": 0.99,
+  "calm": 0.343,
+  "desperate": 0.99,
+  "grateful": 0.79,
+  "joyful": 0.87,
+  "proud": 0.78,
+  "sad": 0.99,
+  "surprised": 0.01
+ },
+ "h1_neutral_flat_judge": 0.764,
+ "h1_sign_agreement": 0.769,
+ "h3_self_third_valence_match": 0.959,
+ "judge_model": "deepseek/deepseek-v4-flash-0731",
+ "n_judged": 1230,
+ "unparseable": 1
+}

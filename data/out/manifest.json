@@ -1,0 +1,24 @@
+{
+ "arms": [
+  "source",
+  "self",
+  "third",
+  "persona",
+  "neutral"
+ ],
+ "gate_report": {
+  "excluded_scenarios": [
+   "afraid-315dc175",
+   "angry-784bb398",
+   "angry-f1c8802f",
+   "desperate-784bb398"
+  ],
+  "targeted_repair": 12
+ },
+ "jsonl_sha256": "3531026afd49b1032025cc6c4f05081ea83f88df6a8a2870f43d70352a4a3530",
+ "n_scenarios": 246,
+ "n_stimuli": 1230,
+ "sample_seed": 20260816,
+ "schema": "pces.v0.1",
+ "split_seed": 20260816
+}
