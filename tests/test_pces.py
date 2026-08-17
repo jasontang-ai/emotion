@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from emotion.arms import PROMPTS
-from emotion.cards import EMOTIONS, N_TOPICS, assign_splits, character_name
+from emotion.cards import N_TOPICS, ScenarioCard, assign_splits, character_name
 from emotion.dataset import build_rows
 from emotion.qa import (
     g1_emotion_word_absent,
@@ -13,7 +13,6 @@ from emotion.qa import (
     g3_length_within,
     parse_judge,
 )
-from emotion.cards import ScenarioCard
 
 
 def _card() -> ScenarioCard:

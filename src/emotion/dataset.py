@@ -110,7 +110,9 @@ def build_rows(cards: list[ScenarioCard], texts: dict[str, str], model: str) -> 
     return rows
 
 
-def write_dataset(rows: list[Stimulus], out_dir: str, manifest_extra: dict) -> dict:
+def write_dataset(
+    rows: list[Stimulus], out_dir: str, manifest_extra: dict[str, object]
+) -> dict[str, object]:
     """Write JSONL + parquet artifacts and a content-hashed manifest.
 
     Args:
@@ -138,5 +140,7 @@ def write_dataset(rows: list[Stimulus], out_dir: str, manifest_extra: dict) -> d
         "jsonl_sha256": digest,
         **manifest_extra,
     }
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=1, sort_keys=True), encoding="utf-8")
+    (out / "manifest.json").write_text(
+        json.dumps(manifest, indent=1, sort_keys=True), encoding="utf-8"
+    )
     return manifest

@@ -20,3 +20,11 @@ where = ["src"]
 
 [tool.ruff]
 line-length = 100
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["vaderSentiment.*"]
+ignore_missing_imports = true

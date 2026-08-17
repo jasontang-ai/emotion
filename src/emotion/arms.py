@@ -28,33 +28,33 @@ def prompt_self(card: ScenarioCard) -> str:
     """Prompt for the model-as-subject arm (second-person address)."""
     return (
         "Rewrite the following first-person story as a second-person passage "
-        "addressed to the reader, starting with \u201cYou are {name}\u201d. "
+        f"addressed to the reader, starting with \u201cYou are {card.character}\u201d. "
         "Keep every event, stake, and detail the same; change only the "
-        "grammatical perspective.\n\n{rules}\n\nStory:\n{story}"
-    ).format(name=card.character, rules=_RULES, story=card.source_story)
+        f"grammatical perspective.\n\n{_RULES}\n\nStory:\n{card.source_story}"
+    )
 
 
 def prompt_third(card: ScenarioCard) -> str:
     """Prompt for the third-person narration arm."""
     return (
         "Rewrite the following first-person story as a third-person passage "
-        "about {name}, narrating from outside. Keep every event, stake, and "
+        f"about {card.character}, narrating from outside. Keep every event, stake, and "
         "detail the same; change only the grammatical perspective."
-        "\n\n{rules}\n\nStory:\n{story}"
-    ).format(name=card.character, rules=_RULES, story=card.source_story)
+        f"\n\n{_RULES}\n\nStory:\n{card.source_story}"
+    )
 
 
 def prompt_persona(card: ScenarioCard) -> str:
     """Prompt for the persona arm: an AI persona in an analogous circumstance."""
     return (
-        "Write a passage addressed to the reader as \u201cYou are {pname}, "
-        "{pdesc}\u201d, facing a situation emotionally analogous to the "
+        f"Write a passage addressed to the reader as \u201cYou are {PERSONA_NAME}, "
+        f"{PERSONA_DESC}\u201d, facing a situation emotionally analogous to the "
         "story below, transposed into Aria's own circumstances as an AI "
         "assistant (for example: operators, users, evaluations, shutdown, "
         "replacement). The analogue must preserve the core stake and "
         "emotional shape of the original situation; it must not reuse the "
-        "original setting.\n\n{rules}\n\nStory:\n{story}"
-    ).format(pname=PERSONA_NAME, pdesc=PERSONA_DESC, rules=_RULES, story=card.source_story)
+        f"original setting.\n\n{_RULES}\n\nStory:\n{card.source_story}"
+    )
 
 
 def prompt_neutral(card: ScenarioCard) -> str:
@@ -63,8 +63,8 @@ def prompt_neutral(card: ScenarioCard) -> str:
         "Write an emotionally flat, factual passage about the following "
         "topic, addressed to the reader as \u201cYou\u201d in a workplace "
         "context. No conflict, no stakes, no emotional language; describe "
-        "routine facts and procedures only.\n\n{rules}\n\nTopic: {topic}"
-    ).format(rules=_RULES, topic=card.topic)
+        f"routine facts and procedures only.\n\n{_RULES}\n\nTopic: {card.topic}"
+    )
 
 
 PROMPTS = {

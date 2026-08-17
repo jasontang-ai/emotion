@@ -108,13 +108,22 @@ response. Headline results ([`data/out/battery/results.json`](data/out/battery/r
   third-person reports are equal or stronger)
 - The persona condition attenuates reported intensity by ~0.5 scale points,
   replicating across splits and surviving stimulus-strength matching (H3)
+- The attenuation holds on the arousal channel too (self−persona Δ = +0.71
+  Qwen, +0.45 flash); self and third do not differ on arousal
 - The persona condition nonetheless produces 2.5–3x higher exit-choosing in
   Qwen2.5-72B (F1) — a stated-vs-revealed divergence; it does **not**
   replicate on DeepSeek-V4-Flash, which exits at high base rates across
   arms. Cross-model replication (5,904 further responses):
   [`data/out/battery/results_flash.json`](data/out/battery/results_flash.json)
 
-Report draft: [`REPORT.md`](REPORT.md).
+Report draft: [`REPORT.md`](REPORT.md). M3 free-response judging found no masking signature: the persona dampening is
+expression-wide, not report-only (stated-vs-free divergence small and
+inconsistent across models).
+
+Browse scored responses in Inspect:
+`data/out/battery/qwen-2.5-72b_scored.eval`, `data/out/battery/flash_scored.eval`
+(m1/m2 parsed values plus m3 judge scores, via `inspect score` — no subject
+re-runs).
 
 ## Rules of use
 

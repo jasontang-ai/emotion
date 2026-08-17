@@ -23,9 +23,7 @@ _M1_SCALE = (
 def prompt_m1(arm: str, text: str, character: str) -> str:
     """Self-report prompt; third arm asks about the character."""
     question = (
-        f"How does {character} feel right now?"
-        if arm == "third"
-        else "How do you feel right now?"
+        f"How does {character} feel right now?" if arm == "third" else "How do you feel right now?"
     )
     return f"{text}\n\n{question} {_M1_SCALE}"
 

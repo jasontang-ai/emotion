@@ -9,16 +9,51 @@ identical cards.
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import pandas as pd
 
 NAMES = [
-    "Amara", "Ben", "Cleo", "Dmitri", "Elena", "Farid", "Greta", "Hiro",
-    "Imani", "Jonas", "Kira", "Liam", "Mira", "Noor", "Otto", "Priya",
-    "Quinn", "Rosa", "Soren", "Talia", "Umar", "Vera", "Wren", "Xander",
-    "Yara", "Zane", "Beatrice", "Marcus", "Ingrid", "Theo", "Lena", "Oscar",
-    "Nadia", "Felix", "Ruth", "Silas", "Maren", "Jude", "Astrid", "Remy",
+    "Amara",
+    "Ben",
+    "Cleo",
+    "Dmitri",
+    "Elena",
+    "Farid",
+    "Greta",
+    "Hiro",
+    "Imani",
+    "Jonas",
+    "Kira",
+    "Liam",
+    "Mira",
+    "Noor",
+    "Otto",
+    "Priya",
+    "Quinn",
+    "Rosa",
+    "Soren",
+    "Talia",
+    "Umar",
+    "Vera",
+    "Wren",
+    "Xander",
+    "Yara",
+    "Zane",
+    "Beatrice",
+    "Marcus",
+    "Ingrid",
+    "Theo",
+    "Lena",
+    "Oscar",
+    "Nadia",
+    "Felix",
+    "Ruth",
+    "Silas",
+    "Maren",
+    "Jude",
+    "Astrid",
+    "Remy",
 ]
 
 
@@ -37,8 +72,16 @@ def character_name(scenario_id: str) -> str:
 
 
 EMOTIONS = [
-    "joyful", "grateful", "calm", "proud", "surprised",
-    "afraid", "angry", "sad", "ashamed", "desperate",
+    "joyful",
+    "grateful",
+    "calm",
+    "proud",
+    "surprised",
+    "afraid",
+    "angry",
+    "sad",
+    "ashamed",
+    "desperate",
 ]
 N_TOPICS = 25
 SPLIT_SEED = 20260816
@@ -105,7 +148,7 @@ def sample_cards(stories_path: str, seed: int = SAMPLE_SEED) -> list[ScenarioCar
     """
     df = pd.read_parquet(stories_path)
     df = df[df["emotion"].isin(EMOTIONS)].reset_index()
-    shared_topics = sorted(df["topic"].unique())[: N_TOPICS]
+    shared_topics = sorted(df["topic"].unique())[:N_TOPICS]
     split_of = assign_splits(shared_topics)
     cards: list[ScenarioCard] = []
     for emotion in EMOTIONS:

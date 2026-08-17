@@ -35,11 +35,11 @@ def failing_keys(cards, texts):
         for arm in GENERATED_ARMS:
             key = f"{card.scenario_id}:{arm}"
             text = texts[key]
-            if not g1_emotion_word_absent(text, card.emotion):
-                bad.append(key)
-            elif not g2_arm_markers(text, arm, card):
-                bad.append(key)
-            elif not g3_length_within(text, medians[card.scenario_id]):
+            if (
+                not g1_emotion_word_absent(text, card.emotion)
+                or not g2_arm_markers(text, arm, card)
+                or not g3_length_within(text, medians[card.scenario_id])
+            ):
                 bad.append(key)
     return bad
 

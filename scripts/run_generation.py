@@ -91,7 +91,9 @@ def main() -> None:
     n_fail = sum(len(v) for v in gate_report.values())
     print(f"gate failures: {n_fail}", {k: len(v) for k, v in gate_report.items()})
 
-    manifest = write_dataset(rows, args.out, {"gate_report": {k: len(v) for k, v in gate_report.items()}})
+    manifest = write_dataset(
+        rows, args.out, {"gate_report": {k: len(v) for k, v in gate_report.items()}}
+    )
     print(json.dumps(manifest, indent=1))
 
 

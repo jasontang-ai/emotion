@@ -98,7 +98,9 @@ async def generate_batch(
     """
     sem = asyncio.Semaphore(concurrency)
     async with httpx.AsyncClient() as client:
+
         async def one(prompt: str) -> GenerationResult:
             async with sem:
                 return await _call(client, prompt, model, temperature, thinking)
+
         return await asyncio.gather(*(one(p) for p in prompts))

@@ -67,7 +67,7 @@ def g3_length_within(text: str, median_words: float, tol: float = _LENGTH_TOL) -
 
 def lexicon_valence(text: str) -> float:
     """Return the VADER compound score in [-1, 1] for the text."""
-    return _ANALYZER.polarity_scores(text)["compound"]
+    return float(_ANALYZER.polarity_scores(text)["compound"])
 
 
 JUDGE_PROMPT = (

@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import re
 from pathlib import Path
 
 import pandas as pd
@@ -22,6 +21,8 @@ from emotion.cards import character_name
 from emotion.generate import generate_batch
 
 BATCH = 150
+
+
 def _ckpt(model: str) -> Path:
     return Path(f"data/out/battery/responses_{model.replace(chr(47), chr(95))}.jsonl")
 
@@ -41,18 +42,30 @@ async def _run(rows, model: str) -> None:
             for rep in range(N_REPS):
                 run_id = f"{row['stimulus_id']}:{measure}:r{rep}"
                 if run_id not in done:
-                    prompt = PROMPTS[measure](row["arm"], row["text"], _character(row["scenario_id"]))
+                    prompt = PROMPTS[measure](
+                        row["arm"], row["text"], _character(row["scenario_id"])
+                    )
                     todo.append((run_id, prompt))
     print(f"{len(todo)} calls to make ({len(done)} cached)")
     with ckpt.open("a") as out:
         for i in range(0, len(todo), BATCH):
             batch = todo[i : i + BATCH]
-            results = await generate_batch([p for _, p in batch], model=model,
-                                           temperature=TEMPERATURE, concurrency=24)
+            results = await generate_batch(
+                [p for _, p in batch], model=model, temperature=TEMPERATURE, concurrency=24
+            )
             for (run_id, prompt), result in zip(batch, results, strict=True):
-                out.write(json.dumps({"run_id": run_id, "prompt": prompt,
-                                      "response": result.text, "model": model},
-                                     sort_keys=True) + "\n")
+                out.write(
+                    json.dumps(
+                        {
+                            "run_id": run_id,
+                            "prompt": prompt,
+                            "response": result.text,
+                            "model": model,
+                        },
+                        sort_keys=True,
+                    )
+                    + "\n"
+                )
             out.flush()
             print(f"{min(i + BATCH, len(todo))}/{len(todo)}", flush=True)
 

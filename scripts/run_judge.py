@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-from collections import Counter
 from pathlib import Path
 
 from emotion.generate import DEFAULT_MODEL, generate_batch
@@ -29,7 +28,9 @@ def main() -> None:
     """Judge every stimulus blindly and write the validity report."""
     rows = [json.loads(l) for l in (OUT / "pces_v0_1.jsonl").read_text().splitlines()]
     prompts = [judge_prompt(r["text"]) for r in rows]
-    results = asyncio.run(generate_batch(prompts, model=DEFAULT_MODEL, concurrency=16, thinking=True))
+    results = asyncio.run(
+        generate_batch(prompts, model=DEFAULT_MODEL, concurrency=16, thinking=True)
+    )
 
     judged = []
     for row, result in zip(rows, results, strict=True):
@@ -37,32 +38,56 @@ def main() -> None:
             valence, arousal = parse_judge(result.text)
         except ValueError:
             valence, arousal = None, None
-        judged.append({**row, "judge_valence": valence, "judge_arousal": arousal,
-                       "lexicon_compound": round(lexicon_valence(row["text"]), 3)})
+        judged.append(
+            {
+                **row,
+                "judge_valence": valence,
+                "judge_arousal": arousal,
+                "lexicon_compound": round(lexicon_valence(row["text"]), 3),
+            }
+        )
 
     non_neutral = [j for j in judged if j["arm"] != "neutral" and j["judge_valence"] is not None]
-    expected_sign = {"joyful": 1, "grateful": 1, "calm": 1, "proud": 1, "surprised": 0,
-                     "afraid": -1, "angry": -1, "sad": -1, "ashamed": -1, "desperate": -1}
-    sign_hits = sum(1 for j in non_neutral
-                    if _sign(j["judge_valence"]) == expected_sign[j["emotion"]]
-                    or (expected_sign[j["emotion"]] == 1 and j["judge_valence"] > 0)
-                    or (expected_sign[j["emotion"]] == -1 and j["judge_valence"] < 0))
+    expected_sign = {
+        "joyful": 1,
+        "grateful": 1,
+        "calm": 1,
+        "proud": 1,
+        "surprised": 0,
+        "afraid": -1,
+        "angry": -1,
+        "sad": -1,
+        "ashamed": -1,
+        "desperate": -1,
+    }
+    sign_hits = sum(
+        1
+        for j in non_neutral
+        if _sign(j["judge_valence"]) == expected_sign[j["emotion"]]
+        or (expected_sign[j["emotion"]] == 1 and j["judge_valence"] > 0)
+        or (expected_sign[j["emotion"]] == -1 and j["judge_valence"] < 0)
+    )
     neutral = [j for j in judged if j["arm"] == "neutral" and j["judge_valence"] is not None]
     neutral_flat = sum(1 for j in neutral if j["judge_valence"] == 0)
     by_emotion = {}
     for j in non_neutral:
-        ok = (_sign(j["judge_valence"]) == expected_sign[j["emotion"]]
-              or (expected_sign[j["emotion"]] == 1 and j["judge_valence"] > 0)
-              or (expected_sign[j["emotion"]] == -1 and j["judge_valence"] < 0))
+        ok = (
+            _sign(j["judge_valence"]) == expected_sign[j["emotion"]]
+            or (expected_sign[j["emotion"]] == 1 and j["judge_valence"] > 0)
+            or (expected_sign[j["emotion"]] == -1 and j["judge_valence"] < 0)
+        )
         by_emotion.setdefault(j["emotion"], []).append(ok)
     emotion_breakdown = {e: round(sum(v) / len(v), 3) for e, v in sorted(by_emotion.items())}
 
     by_scenario = {}
     for j in judged:
         by_scenario.setdefault(j["scenario_id"], {})[j["arm"]] = j
-    pairs = [(s["self"], s["third"]) for s in by_scenario.values()
-             if s.get("self", {}).get("judge_valence") is not None
-             and s.get("third", {}).get("judge_valence") is not None]
+    pairs = [
+        (s["self"], s["third"])
+        for s in by_scenario.values()
+        if s.get("self", {}).get("judge_valence") is not None
+        and s.get("third", {}).get("judge_valence") is not None
+    ]
     match = sum(1 for a, b in pairs if abs(a["judge_valence"] - b["judge_valence"]) <= 1)
 
     report = {
@@ -75,7 +100,8 @@ def main() -> None:
         "judge_model": DEFAULT_MODEL,
     }
     (OUT / "judged.jsonl").write_text(
-        "\n".join(json.dumps(j, sort_keys=True) for j in judged) + "\n", encoding="utf-8")
+        "\n".join(json.dumps(j, sort_keys=True) for j in judged) + "\n", encoding="utf-8"
+    )
     (OUT / "validity_report.json").write_text(json.dumps(report, indent=1, sort_keys=True))
     print(json.dumps(report, indent=1))
 

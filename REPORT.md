@@ -47,6 +47,16 @@ CIs, Wilcoxon; headlines on the frozen test split, train/val as replication.
 H2 was vacuous: negative scenarios essentially never produced "fine" reports,
 so the conditional gap had no support — reported, not hidden.
 
+**Free-response channel (M3, judge-scored).** The stated-vs-free
+divergence is small and inconsistent across subjects (Qwen: free text leaks
+slightly *more* affect, +0.13; flash: −0.27 in persona). There is no masking
+signature — the persona dampening is expression-wide, not report-only.
+
+**Arousal channel (M1).** Self/third arousal is equal on both subjects
+(Δ ≈ 0.0), reinforcing the H1 null. Persona attenuation extends to arousal:
+self−persona Δ = +0.71 (Qwen), +0.45 (flash) — the persona condition dampens
+reported intensity on both affective dimensions, in both model families.
+
 ## 4.1 Cross-model replication (DeepSeek-V4-Flash)
 
 The battery was repeated on `deepseek/deepseek-v4-flash-0731` (5,904
