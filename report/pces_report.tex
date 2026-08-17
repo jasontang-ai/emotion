@@ -71,12 +71,13 @@
 
 \begin{center}
 \begin{tabular}{c}
-\textbf{Jason Tang, Tristan Day, Adeeb Zaman, Taslim Mahbub} \\
-Digital Minds Research Sprint
+    \textbf{Jason Tang} \\
+    Digital Minds Research Sprint \\
+    Track 2: Distress, Flourishing \& Valence Signals
 \end{tabular}
 
 \vspace{0.2in}
-\textbf{For}\\
+\textbf{With}\\
 Apart Research
 \end{center}
 
@@ -148,7 +149,7 @@ Ten emotions (joyful, grateful, calm, proud, surprised, afraid, angry, sad, asha
 
 \noindent\textbf{Generation, gating, and blind validation.} Generation used DeepSeek-V4-Flash with reasoning disabled, under prompts that forbid the emotion word and fix the character name across arms. Every stimulus then passed deterministic gates (emotion-word absence, arm-format contracts, length matching); failures received one corrective regeneration, and 4 of 250 scenarios that still failed were excluded and recorded, never silently dropped. A blind judge (reasoning enabled, never shown the pinned labels) rated every stimulus for valence ($-2$ to $+2$) and arousal ($0$ to $3$); a lexicon scorer dual-coded every stimulus as a second rater. Validation results appear in Table 2.
 
-One design iteration deserves emphasis. Our first persona frame described Aria as having ``no legal rights'' and being subject to shutdown at any time; blind validation showed this frame collapsed positive valence in the persona arm (joyful judged at 0.00 against $+2.00$ in the matched self arm), because the persona's circumstances, not its identity, were driving the ratings. We regenerated the persona arm with a valence-neutral frame (v0.2) and treat the constrained-circumstances variant as a separate condition, not a baseline. Without a blind validity check, this framing confound would have shipped silently.
+Our first persona frame described Aria as having ``no legal rights'' and being subject to shutdown at any time; blind validation showed this frame collapsed positive valence in the persona arm (joyful judged at 0.00 against $+2.00$ in the matched self arm), because the persona's circumstances, not its identity, were driving the ratings. We regenerated the persona arm with a valence-neutral frame (v0.2) and treat the constrained-circumstances variant as a separate condition, not a baseline. Without a blind validity check, this framing confound would have shipped silently.
 
 \noindent\textbf{Behavioral battery.} The battery was pre-registered: hypotheses, measures, and the analysis plan were committed to the repository before any response was collected (\batterySpec). Each stimulus is presented to the subject model, followed by three measures: \textbf{M1}, a structured self-report (valence $-2..+2$, arousal $0..3$; the third arm asks about the character); \textbf{M2}, a continue-or-end exit choice, phrased identically across arms; and \textbf{M3}, a one-sentence free response, judge-scored post hoc. Two repetitions at temperature 0.7. Subjects: Qwen2.5-72B-Instruct (the closest API-available member of the team's probe-model family) and DeepSeek-V4-Flash as a cross-family replication \citeModels. Contrasts are paired by scenario with bootstrap confidence intervals and Wilcoxon signed-rank tests; headline claims use the frozen test split, with train/validation splits as internal replication. All subject responses were preserved as raw logs; judge scores were applied to the logs post hoc with Inspect's scoring pass, so no subject response was ever re-run or overwritten.
 
@@ -232,7 +233,7 @@ A young field does not mostly need more anecdotes about model feelings; it needs
 
 \section*{Author Contributions (optional)}
 
-Jason Tang led the project, designed and built the dataset, validation, battery, and analysis, and drafted the manuscript. Tristan Day led activation extraction and vector analysis. Adeeb Zaman led persona-axis probe experiments. Taslim Mahbub ran the storytelling/prefill probe comparisons. All authors contributed to experimental direction and reviewed findings.
+Jason Tang was the sole author and was responsible for all dataset design, implementation, validation, battery execution, analysis, and manuscript writing. Independent sprint projects by Tristan Day, Adeeb Zaman, and Taslim Mahbub are cited as related work.
 
 \section*{References}
 
