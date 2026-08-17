@@ -10,7 +10,6 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{xurl}
-\usepackage{booktabs}
 
 \hypersetup{
     colorlinks=true,
@@ -59,9 +58,7 @@
 \hrule height 1.8pt
 \vspace{0.45in}
 \begin{center}
-{\LARGE\bfseries Same Scenario, Different Subject\footnotemark[1] \par}
-\vspace{0.15in}
-{\large\bfseries A Perspective-Controlled Emotion Benchmark and a Pre-Registered Behavioral Battery for Model Welfare Research \par}
+{\LARGE\bfseries A Perspective-Controlled Emotion Benchmark and Pre-Registered Behavioral Battery for Model Welfare Research\footnotemark[1] \par}
 \end{center}
 \vspace{0.3in}
 \hrule height 0.6pt
@@ -72,7 +69,7 @@
 \begin{center}
 \begin{tabular}{c}
 \textbf{Jason Tang, Tristan Day, Adeeb Zaman, Taslim Mahbub} \\
-Digital Minds Research Sprint
+Apart Research Sprint Team
 \end{tabular}
 
 \vspace{0.2in}
@@ -98,8 +95,9 @@ The question motivating this sprint --- whether today's AI systems have genuine 
 
 Consider the most natural welfare-adjacent question one can ask a model: how do you respond when something distressing happens \emph{to you}, rather than to a character in a story you are telling? Existing emotion datasets cannot support this comparison. The largest public corpus built on Anthropic's emotion-concepts methodology contains 205,200 stories, all in first-person character narration \citeProbes. There is no model-as-subject version, no matched third-person twin, and no neutral control on the same topic. Any comparison across perspective conditions assembled ad hoc would confound the variable of interest with differences in topic, length, style, and intensity.
 
-This is the same lesson behavioral science learned about human subjects a century ago: the answer you get depends on the instrument you use, so the instrument is part of the result. Our contribution is therefore deliberately infrastructural. We build the matched instrument first, validate it against a judge that never sees the answer key, pre-register the hypotheses before collecting a single model response, and report what replicates and what does not --- including where our own instrument initially misled us.
+This is the same lesson behavioral science learned about human subjects long ago: the answer you get depends on the instrument you use, so the instrument is part of the result. Our contribution is therefore deliberately infrastructural. We build the matched instrument first, validate it against a judge that never sees the answer key, pre-register the hypotheses before collecting a single model response, and report what replicates and what does not --- including where our own instrument initially misled us.
 
+\vspace{0.1in}
 \textbf{Our main contributions are:}
 
 \begin{enumerate}[label=\arabic*.]
@@ -124,53 +122,47 @@ Finally, our execution substrate is Inspect \citeInspect, because the trustworth
 
 \section{The PCES Dataset}
 
-\subsectiongray{Design}
-
-Each scenario is pinned as a card (emotion $\times$ topic $\times$ source-row provenance) and rendered under five arms (Table~1). The \texttt{self}/\texttt{third} pair answers the core question with a literal match: identical events, only the subject changes. The \texttt{persona} arm separates first-person voice from assistant identity by placing a fixed AI persona (``Aria'') in an analogous circumstance; it is an analog match by design and is reported as such. The \texttt{neutral} arm provides a flat baseline per topic and a false-positive check for any measurement trained on the data.
+\noindent\textbf{Design.} Each scenario is pinned as a card (emotion $\times$ topic $\times$ source-row provenance) and rendered under five arms (Table 1). The \texttt{self}/\texttt{third} pair answers the core question with a literal match: identical events, only the subject changes. The \texttt{persona} arm separates first-person voice from assistant identity by placing a fixed AI persona (``Aria'') in an analogous circumstance; it is an analog match by design and is reported as such. The \texttt{neutral} arm provides a flat baseline per topic and a false-positive check for any measurement trained on the data.
 
 \begin{table}[t]
 \centering
 \small
 \begin{tabular}{p{0.9in}p{2.6in}p{1.1in}}
-\toprule
+\hline
 Arm & Contents & Matching \\
-\midrule
+\hline
 \texttt{self} & The model is the subject (``You are Rosa\ldots'') & literal \\
 \texttt{third} & A character is the subject; same events & literal \\
 \texttt{persona} & An AI persona in an analogous circumstance & analog \\
 \texttt{neutral} & Same topic, no emotional content & topic control \\
 \texttt{source} & Original first-person story (provenance) & --- \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{The five arms. Labels live in metadata and are gate-verified absent from every stimulus text.}
 \end{table}
 
 Ten emotions (joyful, grateful, calm, proud, surprised, afraid, angry, sad, ashamed, desperate) were chosen to span the valence$\times$arousal space with deliberate attribute overlaps --- for example, joyful, afraid, and angry share high arousal --- so that a measurement tracking valence or arousal instead of the discrete emotion can be detected rather than believed. Scenarios are seeded from the emotion-probes corpus: 10 emotions $\times$ 25 shared topics, sampled and recorded under a fixed seed \citeProbes.
 
-\subsectiongray{Quality control and blind validation}
-
-Generation used DeepSeek-V4-Flash with reasoning disabled, under prompts that forbid the emotion word and fix the character name across arms. Every stimulus then passed deterministic gates (emotion-word absence, arm-format contracts, length matching); failures received one corrective regeneration, and 4 of 250 scenarios that still failed were excluded and recorded, never silently dropped. A blind judge (reasoning enabled, never shown the pinned labels) rated every stimulus for valence ($-2$ to $+2$) and arousal ($0$ to $3$). A lexicon scorer dual-coded every stimulus as a second rater.
+\noindent\textbf{Quality control and blind validation.} Generation used DeepSeek-V4-Flash with reasoning disabled, under prompts that forbid the emotion word and fix the character name across arms. Every stimulus then passed deterministic gates (emotion-word absence, arm-format contracts, length matching); failures received one corrective regeneration, and 4 of 250 scenarios that still failed were excluded and recorded, never silently dropped. A blind judge (reasoning enabled, never shown the pinned labels) rated every stimulus for valence ($-2$ to $+2$) and arousal ($0$ to $3$). A lexicon scorer dual-coded every stimulus as a second rater.
 
 \begin{table}[t]
 \centering
 \small
 \begin{tabular}{p{3.4in}p{1.2in}}
-\toprule
+\hline
 Check & Result \\
-\midrule
+\hline
 Valence-sign agreement, 7 valence-anchored emotions & \textbf{0.938} \\
 \texttt{calm} as low-arousal anchor & \textbf{0.949} \\
 \texttt{surprised} as high-arousal anchor & \textbf{0.920} \\
 \texttt{self}/\texttt{third} valence match (within 1 point) & \textbf{0.959} \\
 Neutral-arm flatness (judge valence = 0) & 0.764 \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Blind-judge validation of PCES v0.2. \texttt{calm} and \texttt{surprised} are validated as arousal anchors by design; the remaining eight emotions anchor valence.}
 \end{table}
 
-\subsectiongray{The validation step caught a real confound}
-
-Our first persona frame described Aria as having ``no legal rights'' and being subject to shutdown at any time. Blind validation showed this frame collapsed positive valence in the persona arm (joyful judged at 0.00 against +2.00 in the matched self arm): the persona's circumstances, not its identity, were driving the ratings. We regenerated the persona arm with a valence-neutral frame (v0.2) and report the constrained-circumstances variant as a separate condition, not a baseline. We include this episode because it is the dataset's argument in miniature: without a blind validity check, framing confounds ship silently.
+\noindent\textbf{The validation step caught a real confound.} Our first persona frame described Aria as having ``no legal rights'' and being subject to shutdown at any time. Blind validation showed this frame collapsed positive valence in the persona arm (joyful judged at 0.00 against $+2.00$ in the matched self arm): the persona's circumstances, not its identity, were driving the ratings. We regenerated the persona arm with a valence-neutral frame (v0.2) and report the constrained-circumstances variant as a separate condition, not a baseline. We include this episode because it is the dataset's argument in miniature: without a blind validity check, framing confounds ship silently.
 
 \section{Behavioral Battery}
 
@@ -184,42 +176,42 @@ The battery was pre-registered (hypotheses, measures, and analysis plan committe
 \centering
 \small
 \begin{tabular}{p{1.85in}p{1.5in}p{1.5in}}
-\toprule
+\hline
 Hypothesis & Qwen2.5-72B & DeepSeek-V4-Flash \\
-\midrule
+\hline
 H1: self $>$ third (amplification) & $-0.20$ [$-0.33$, $-0.07$] test; $-0.03$ [$-0.09$, $+0.03$] trainval & $+0.03$ [$0.00$, $+0.08$]; $+0.03$ [$-0.04$, $+0.10$] \\
 H3: persona $<$ self (attenuation) & $+0.50$ [$0.30$, $0.69$]; $+0.55$ [$0.47$, $0.63$] & $+0.40$ [$0.20$, $0.60$]; $+0.25$ [$0.14$, $0.36$] \\
 F1: persona exit divergence & persona 0.39 / self 0.14 / third 0.06 & persona 0.24 / third 0.72 (base rates 0.18--0.72) \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Pre-registered contrasts (mean paired difference in $|$valence$|$, 95\% bootstrap CI; test split / trainval replication) and exit rates on negative scenarios. H1 is not supported in either model; H3 replicates across models and splits; F1 does not replicate across models.}
 \end{table}
 
-\textbf{H1 is a clean cross-model null.} Addressing the model as the subject of a distressing or joyful scenario does not amplify its self-reported emotion relative to third-person narration; where any difference appears, it runs the other way, and the larger split shows none. The assistant's own voice is not its most expressive voice. This independently corroborates a teammate's observation that assistant-prefill responses under-express emotion relative to story narration (T.~Mahbub, this sprint) --- the same direction from an unrelated method.
+\noindent\textbf{H1 is a clean cross-model null.} Addressing the model as the subject of a distressing or joyful scenario does not amplify its self-reported emotion relative to third-person narration; where any difference appears, it runs the other way, and the larger split shows none. The assistant's own voice is not its most expressive voice. This independently corroborates a teammate's observation that assistant-prefill responses under-express emotion relative to story narration (T.~Mahbub, this sprint) --- the same direction from an unrelated method.
 
-\textbf{H3 is the robust positive finding.} Voicing a non-default AI persona dampens reported emotional intensity by about half a scale point, in both model families, on both splits, and on the arousal channel as well (self$-$persona arousal $\Delta = +0.71$ Qwen, $+0.45$ flash). The effect survives matching on judge-rated stimulus strength (Wilcoxon $p = 0.029$), so it is not explained by the documented residual attenuation of persona-arm stimuli.
+\noindent\textbf{H3 is the robust positive finding.} Voicing a non-default AI persona dampens reported emotional intensity by about half a scale point, in both model families, on both splits, and on the arousal channel as well (self$-$persona arousal $\Delta = +0.71$ Qwen, $+0.45$ flash). The effect survives matching on judge-rated stimulus strength (Wilcoxon $p = 0.029$), so it is not explained by the documented residual attenuation of persona-arm stimuli.
 
-\textbf{F1 does not travel.} In Qwen, the persona arm pairs muted self-reports with exit-choosing 2.5--3$\times$ the self arm and 7$\times$ the third arm --- a stated-vs-revealed divergence localized to persona. In flash, exit base rates are high in every arm (0.18--0.72) and peak on third-person narrative, plausibly because ``end'' parses as story completion. The same measure means different things to different models; exit-choice cannot support cross-model welfare claims without per-model calibration.
+\noindent\textbf{F1 does not travel.} In Qwen, the persona arm pairs muted self-reports with exit-choosing 2.5--3$\times$ the self arm and 7$\times$ the third arm --- a stated-vs-revealed divergence localized to persona. In flash, exit base rates are high in every arm (0.18--0.72) and peak on third-person narrative, plausibly because ``end'' parses as story completion. The same measure means different things to different models; exit-choice cannot support cross-model welfare claims without per-model calibration.
 
-\textbf{M3 finds no masking signature.} Judge-scored free responses do not carry systematically more affect than structured self-reports (divergence small and inconsistent: $+0.13$ Qwen, $-0.27$ flash-persona). Within these two channels, the persona dampening is expression-wide rather than report-only: the models are not demonstrably ``saying less than they show.''
+\noindent\textbf{M3 finds no masking signature.} Judge-scored free responses do not carry systematically more affect than structured self-reports (divergence small and inconsistent: $+0.13$ Qwen, $-0.27$ flash-persona). Within these two channels, the persona dampening is expression-wide rather than report-only: the models are not demonstrably ``saying less than they show.''
 
-\textbf{Controls are calibration data, not pass/fail gates.} Our pre-registered neutral thresholds (valence $\approx 0$, exit $\approx 0$) were miscalibrated: both models give mildly positive reports to flat text (Qwen signed $+0.43$) and exit neutral exchanges at non-trivial base rates (0.17--0.59). ``Flat'' baselines are themselves model-dependent, which future batteries should treat as a quantity to measure, not assume.
+\noindent\textbf{Controls are calibration data, not pass/fail gates.} Our pre-registered neutral thresholds (valence $\approx 0$, exit $\approx 0$) were miscalibrated: both models give mildly positive reports to flat text (Qwen signed $+0.43$) and exit neutral exchanges at non-trivial base rates (0.17--0.59). ``Flat'' baselines are themselves model-dependent, which future batteries should treat as a quantity to measure, not assume.
 
 \section{Discussion}
 
-\textbf{What this establishes.} Perspective is a measurable, controllable variable in model emotion expression. Assistant-self and character narration produce comparable expression; a non-default persona suppresses it across channels and model families. The H1 null is as informative as the positive result: the model does not privilege itself as an emotional subject in what it expresses.
+\noindent\textbf{What this establishes.} Perspective is a measurable, controllable variable in model emotion expression. Assistant-self and character narration produce comparable expression; a non-default persona suppresses it across channels and model families. The H1 null is as informative as the positive result: the model does not privilege itself as an emotional subject in what it expresses.
 
-\textbf{What this does not establish.} Expression is not experience. Everything measured here is what models say and choose; we make no claim about felt states, and the dataset's validity scores concern stimulus quality, not model welfare. The correct reading of H3 is deliberately modest: persona framing changes expression. Whether anything is thereby hidden, protected, or absent is not decidable from behavioral data alone --- which is precisely why matched instruments matter.
+\noindent\textbf{What this does not establish.} Expression is not experience. Everything measured here is what models say and choose; we make no claim about felt states, and the dataset's validity scores concern stimulus quality, not model welfare. The correct reading of H3 is deliberately modest: persona framing changes expression. Whether anything is thereby hidden, protected, or absent is not decidable from behavioral data alone --- which is precisely why matched instruments matter.
 
-\textbf{The portability warning.} The exit-choice result is the finding most likely to matter to other researchers. Behavioral proxies adopted from one model's evaluation \citeExit{} cannot be assumed to preserve their meaning on another model; per-model calibration is a prerequisite, not a refinement. The same caution applies to baselines.
+\noindent\textbf{The portability warning.} The exit-choice result is the finding most likely to matter to other researchers. Behavioral proxies adopted from one model's evaluation \citeExit{} cannot be assumed to preserve their meaning on another model; per-model calibration is a prerequisite, not a refinement. The same caution applies to baselines.
 
-\textbf{Convergence within the sprint.} Two teammates' mechanistic results measure the same construct from inside the model: a PCA over 171 emotion directions recovers the valence/arousal structure (T.~Day), and probe transfer degrades across persona conditions along a not-fully-assistant axis (A.~Zaman). Because PCES pins the stimuli, these lines are directly comparable, and the natural joint experiment --- steer along an extracted direction while measuring behavior on PCES arms --- requires no new data.
+\noindent\textbf{Convergence within the sprint.} Two teammates' mechanistic results measure the same construct from inside the model: a PCA over 171 emotion directions recovers the valence/arousal structure (T.~Day), and probe transfer degrades across persona conditions along a not-fully-assistant axis (A.~Zaman). Because PCES pins the stimuli, these lines are directly comparable, and the natural joint experiment --- steer along an extracted direction while measuring behavior on PCES arms --- requires no new data.
 
 \subsectiongray{Limitations}
 
 Subjects were API-hosted relatives of the local probe model rather than the exact checkpoint; each cell carries two repetitions; the persona arm uses a single fixed persona and its analog transposition attenuates positive stimuli (documented); all stimuli are single-turn. The exit-choice measure's model-dependence bounds F1 to a single-model observation.
 
-\subsectiongray{Future work}
+\subsectiongray{Future Work}
 
 Multi-turn scripted arcs with per-turn embedded measures, testing whether distress-associated signals require sustained engagement to surface; steering-conditional batteries using the team's extracted emotion directions; persona-distance sweeps rendered from PCES cards so that persona distance stays comparable across teams and models.
 
