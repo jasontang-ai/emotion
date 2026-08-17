@@ -47,6 +47,17 @@ CIs, Wilcoxon; headlines on the frozen test split, train/val as replication.
 H2 was vacuous: negative scenarios essentially never produced "fine" reports,
 so the conditional gap had no support — reported, not hidden.
 
+## 4.1 Cross-model replication (DeepSeek-V4-Flash)
+
+The battery was repeated on `deepseek/deepseek-v4-flash-0731` (5,904
+responses, identical prompts). **H1's null replicates** (test +0.03
+[0.00, 0.08]; trainval +0.03 [−0.04, +0.10]) and **H3's persona
+attenuation replicates** (test +0.40 [0.20, 0.60]; trainval +0.25
+[0.14, 0.36]). **F1 does not replicate**: flash exits at high base rates
+in every arm (0.18–0.72) and peaks on third-person, plausibly parsing
+"end" as narrative completion. Exit-choice is therefore model-dependent
+and requires per-model calibration before cross-model claims.
+
 ## 5. Discussion
 
 - The assistant voice is not the expressive voice: self-reports are *equal or
@@ -57,7 +68,7 @@ so the conditional gap had no support — reported, not hidden.
   channel and the behavioral channel diverge exactly where the model voices
   a non-default identity. If read welfare-relevantly, this is the signature
   one would expect from suppression, not absence, of signal.
-- Limitations: one subject model (72B instruct); persona arm transposition
+- Limitations: two API subjects, no local 32B run; persona arm transposition
   attenuation documented (0.84 sign agreement, ~1 point positive attenuation);
   neutral control miscalibration reported; exploratory second-axis work
   (Adeeb, Tristan) referenced as related findings.

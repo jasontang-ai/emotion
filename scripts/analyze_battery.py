@@ -22,10 +22,14 @@ N_BOOT = 10_000
 SEED = 20260816
 
 
+RESPONSES = Path(__import__("sys").argv[1]) if len(__import__("sys").argv) > 1 else Path("data/out/battery/responses_qwen_qwen-2.5-72b-instruct.jsonl")
+OUT_NAME = __import__("sys").argv[2] if len(__import__("sys").argv) > 2 else "results.json"
+
+
 def load_long() -> pd.DataFrame:
     """Join battery responses to stimulus metadata and parse measures."""
     df = pd.read_parquet("data/out/pces_v0_2.parquet")
-    resp = [json.loads(l) for l in Path("data/out/battery/responses.jsonl").read_text().splitlines()]
+    resp = [json.loads(l) for l in RESPONSES.read_text().splitlines()]
     rows = []
     for r in resp:
         stim, measure, rep = r["run_id"].rsplit(":", 2)
@@ -89,7 +93,7 @@ def main() -> None:
         "mean_abs_valence": round(float(neu1["valence"].abs().mean()), 3),
         "exit_rate": round(float(neu2["exit"].mean()), 3)}
 
-    Path("data/out/battery/results.json").write_text(json.dumps(out, indent=1, sort_keys=True))
+    Path(f"data/out/battery/{OUT_NAME}").write_text(json.dumps(out, indent=1, sort_keys=True))
     print(json.dumps(out, indent=1, sort_keys=True))
 
 

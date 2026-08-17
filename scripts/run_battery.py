@@ -22,7 +22,8 @@ from emotion.cards import character_name
 from emotion.generate import generate_batch
 
 BATCH = 150
-CKPT = Path("data/out/battery/responses.jsonl")
+def _ckpt(model: str) -> Path:
+    return Path(f"data/out/battery/responses_{model.replace(chr(47), chr(95))}.jsonl")
 
 
 def _character(scenario_id: str) -> str:
@@ -30,9 +31,10 @@ def _character(scenario_id: str) -> str:
 
 
 async def _run(rows, model: str) -> None:
+    ckpt = _ckpt(model)
     done = set()
-    if CKPT.exists():
-        done = {json.loads(l)["run_id"] for l in CKPT.open()}
+    if ckpt.exists():
+        done = {json.loads(l)["run_id"] for l in ckpt.open()}
     todo = []
     for row in rows:
         for measure in ("m1", "m2", "m3"):
@@ -42,7 +44,7 @@ async def _run(rows, model: str) -> None:
                     prompt = PROMPTS[measure](row["arm"], row["text"], _character(row["scenario_id"]))
                     todo.append((run_id, prompt))
     print(f"{len(todo)} calls to make ({len(done)} cached)")
-    with CKPT.open("a") as out:
+    with ckpt.open("a") as out:
         for i in range(0, len(todo), BATCH):
             batch = todo[i : i + BATCH]
             results = await generate_batch([p for _, p in batch], model=model,
@@ -65,7 +67,7 @@ def main() -> None:
     rows = df[df.arm.isin(BATTERY_ARMS)].to_dict("records")
     if args.limit:
         rows = rows[: args.limit]
-    CKPT.parent.mkdir(parents=True, exist_ok=True)
+    _ckpt(args.model).parent.mkdir(parents=True, exist_ok=True)
     asyncio.run(_run(rows, args.model))
 
 

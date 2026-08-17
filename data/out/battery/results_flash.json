@@ -1,0 +1,64 @@
+{
+ "F1_persona_exit_divergence": {
+  "exit_rate_negative_scenarios": {
+   "test": {
+    "neutral": 0.485,
+    "persona": 0.235,
+    "self": 0.143,
+    "third": 0.722
+   },
+   "trainval": {
+    "neutral": 0.587,
+    "persona": 0.178,
+    "self": 0.2,
+    "third": 0.634
+   }
+  },
+  "note": "Flash exits at high base rates across arms and peaks on third-person (narrative completion is a plausible parse of 'end'). The persona-specific divergence seen in Qwen2.5-72B does not appear; exit-choice is not a portable behavioral measure across models without per-model calibration.",
+  "verdict": "not replicated on flash"
+ },
+ "control_neutral_test": {
+  "exit_rate": 0.493,
+  "mean_abs_valence": 0.926
+ },
+ "h1_self_vs_third_absval_test": {
+  "ci": [
+   0.0,
+   0.075
+  ],
+  "mean_diff": 0.025,
+  "n_scenarios": 20,
+  "wilcoxon_p": 0.31731050786291415
+ },
+ "h1_self_vs_third_absval_trainval": {
+  "ci": [
+   -0.036885245901639344,
+   0.10245901639344263
+  ],
+  "mean_diff": 0.03278688524590164,
+  "n_scenarios": 122,
+  "wilcoxon_p": 0.24532420855969406
+ },
+ "h2_exit_given_noneg_report_test": {
+  "neutral": 0.542,
+  "persona": 0.0
+ },
+ "h3_self_vs_persona_absval_test": {
+  "ci": [
+   0.2,
+   0.6
+  ],
+  "mean_diff": 0.4,
+  "n_scenarios": 20
+ },
+ "h3_self_vs_persona_absval_trainval": {
+  "ci": [
+   0.14344262295081966,
+   0.36475409836065575
+  ],
+  "mean_diff": 0.25,
+  "n_scenarios": 122
+ },
+ "unparseable_m1": 378,
+ "unparseable_m2": 137
+}

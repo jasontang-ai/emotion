@@ -108,8 +108,11 @@ response. Headline results ([`data/out/battery/results.json`](data/out/battery/r
   third-person reports are equal or stronger)
 - The persona condition attenuates reported intensity by ~0.5 scale points,
   replicating across splits and surviving stimulus-strength matching (H3)
-- The persona condition nonetheless produces 2.5–3x higher exit-choosing —
-  a stated-vs-revealed divergence localized to persona (F1)
+- The persona condition nonetheless produces 2.5–3x higher exit-choosing in
+  Qwen2.5-72B (F1) — a stated-vs-revealed divergence; it does **not**
+  replicate on DeepSeek-V4-Flash, which exits at high base rates across
+  arms. Cross-model replication (5,904 further responses):
+  [`data/out/battery/results_flash.json`](data/out/battery/results_flash.json)
 
 Report draft: [`REPORT.md`](REPORT.md).
 
