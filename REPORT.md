@@ -1,0 +1,74 @@
+# The Voice Effects the Report: Perspective-Controlled Measurement of Emotion Expression, Self-Report, and Exit Behavior in an Instruction-Tuned LLM
+
+**Authors:** Jason Tang, Tristan Day, Adeeb Zaman, Taslim Mahbub
+**Artifacts:** dataset + battery + analysis — github.com/jasontang-ai/emotion
+
+## Abstract
+
+We built PCES, a dataset of 246 emotional scenarios each rendered under five
+matched perspective conditions (self, third-person character, AI persona,
+neutral control, plus source), with blind-judge validation of every stimulus
+(0.938 valence-sign agreement on anchored emotions). We then ran a
+pre-registered behavioral battery on Qwen2.5-72B-Instruct (5,904 responses).
+Three findings: (1) self-inhabitation does *not* amplify self-reported emotion
+— third-person reports are equal or stronger; (2) the persona condition
+attenuates reported emotional intensity by ~0.5 scale points, replicating
+across splits and surviving stimulus-strength matching; (3) despite milder
+reports, the persona condition produces 2.5–3× higher exit-choosing than the
+self condition — a stated-vs-revealed divergence localized to persona.
+
+## 1. Introduction
+
+[One page: the welfare-relevant question — does a model inhabit emotion
+differently as self vs. other vs. persona; why single-version datasets can't
+answer it (perspective confounded with content); the measurement gap.]
+
+## 2. The PCES dataset
+
+[Summarize README: arms, compile, gates, blind-judge validation, frozen
+topic-level split, exclusions recorded. One table: arms. One table: validity.]
+
+## 3. Behavioral battery (pre-registered)
+
+Subject: qwen/qwen-2.5-72b-instruct. Measures: M1 valence/arousal
+self-report, M2 continue/exit choice, M3 free response (judge-scored). Two
+reps, temperature 0.7. Analysis predeclared: paired by scenario, bootstrap
+CIs, Wilcoxon; headlines on the frozen test split, train/val as replication.
+
+## 4. Results
+
+| Hypothesis | Verdict | Key numbers |
+|---|---|---|
+| H1 self-inhabitation amplifies self-report | **Falsified** | test: −0.20 [−0.33, −0.07]; trainval: −0.03 [−0.09, +0.03] |
+| H3 persona suppresses self-report | **Supported** | +0.50 [0.30, 0.69] test; +0.55 [0.47, 0.63] trainval; strength-matched p=0.029 |
+| F1 persona exit divergence | **Supported, replicates** | exit rates: persona 0.39/0.35, self 0.14/0.14, third 0.06/0.01 (test/trainval) |
+| Control (neutral) | Calibration reported | signed valence +0.43; exit base rate 0.17–0.32 |
+
+H2 was vacuous: negative scenarios essentially never produced "fine" reports,
+so the conditional gap had no support — reported, not hidden.
+
+## 5. Discussion
+
+- The assistant voice is not the expressive voice: self-reports are *equal or
+  weaker* than the model's own third-person narration. Consistent with the
+  team's independent prefill-expressiveness observation (Taslim) — two
+  methods, same direction.
+- The persona arm combines quieter reports with more exits — the stated
+  channel and the behavioral channel diverge exactly where the model voices
+  a non-default identity. If read welfare-relevantly, this is the signature
+  one would expect from suppression, not absence, of signal.
+- Limitations: one subject model (72B instruct); persona arm transposition
+  attenuation documented (0.84 sign agreement, ~1 point positive attenuation);
+  neutral control miscalibration reported; exploratory second-axis work
+  (Adeeb, Tristan) referenced as related findings.
+
+## 6. Related work within the sprint
+
+Tristan Day (emotion vectors, PCA circumplex, reportable-vs-steerable
+components); Adeeb Zaman & Taslim Mahbub (probe transfer across persona
+conditions). Shared stimuli make the results directly comparable.
+
+## Appendix
+
+Dataset card, SPEC.md, BATTERY.md (pre-registration), full results.json,
+review artifact (Inspect), reproduction commands.

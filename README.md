@@ -97,6 +97,22 @@ The generation condition is pinned in
 [ASTRAL](https://github.com/jasontang-ai/astral-bio) pattern: matched
 conditions, pinned labels, gated quality, hashed manifests.
 
+## Behavioral battery results (v0.1)
+
+The pre-registered battery ([`BATTERY.md`](BATTERY.md)) ran
+`qwen/qwen-2.5-72b-instruct` through all battery arms (5,904 responses):
+structured valence/arousal self-report, a continue/exit choice, and a free
+response. Headline results ([`data/out/battery/results.json`](data/out/battery/results.json)):
+
+- Self-inhabitation does not amplify self-reported emotion (H1 falsified;
+  third-person reports are equal or stronger)
+- The persona condition attenuates reported intensity by ~0.5 scale points,
+  replicating across splits and surviving stimulus-strength matching (H3)
+- The persona condition nonetheless produces 2.5–3x higher exit-choosing —
+  a stated-vs-revealed divergence localized to persona (F1)
+
+Report draft: [`REPORT.md`](REPORT.md).
+
 ## Rules of use
 
 - Report results on the `test` split. Splits are topic-level, so conditions

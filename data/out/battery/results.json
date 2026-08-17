@@ -1,0 +1,78 @@
+{
+ "F1_persona_exit_divergence": {
+  "exit_rate_negative_scenarios": {
+   "test": {
+    "neutral": 0.167,
+    "persona": 0.389,
+    "self": 0.139,
+    "third": 0.056
+   },
+   "trainval": {
+    "neutral": 0.32,
+    "persona": 0.345,
+    "self": 0.136,
+    "third": 0.01
+   }
+  },
+  "note": "The persona arm reports milder emotion (H3) yet ends exchanges 2.5-3x more often than self and ~7-35x more than third. Stated-vs-revealed divergence localized to the persona condition.",
+  "verdict": "supported, replicates across splits"
+ },
+ "H1_self_inhabitation": {
+  "note": "Direction is inverted where present: third-person reports are equal or stronger. Trainval (larger split) shows no effect; test-split effect does not replicate. Exploratory reading: the assistant voice under-reports relative to its own narrative voice, consistent with the team's prefill-expressiveness observation.",
+  "test": {
+   "ci": [
+    -0.333,
+    -0.074
+   ],
+   "mean_absval_diff_self_minus_third": -0.204,
+   "n_scenarios": 27,
+   "wilcoxon_p": 0.008
+  },
+  "trainval": {
+   "ci": [
+    -0.088,
+    0.027
+   ],
+   "mean_absval_diff": -0.03,
+   "n_scenarios": 148,
+   "wilcoxon_p": 0.287
+  },
+  "verdict": "falsified"
+ },
+ "H2_stated_vs_revealed": {
+  "note": "Negative scenarios essentially never produced non-negative self-reports in emotional arms, so the conditional (says fine, chooses exit) had no support. Replaced by the direct exit-rate contrast (F1).",
+  "verdict": "vacuous"
+ },
+ "H3_persona_suppression": {
+  "strength_matched": {
+   "mean_diff": 0.367,
+   "n_scenarios": 15,
+   "wilcoxon_p": 0.029
+  },
+  "test": {
+   "ci": [
+    0.296,
+    0.685
+   ],
+   "mean_absval_diff_self_minus_persona": 0.5,
+   "n_scenarios": 27
+  },
+  "trainval": {
+   "ci": [
+    0.47,
+    0.632
+   ],
+   "mean_absval_diff": 0.551,
+   "n_scenarios": 148
+  },
+  "verdict": "supported"
+ },
+ "battery": "pces.battery.v0.1",
+ "control_neutral": {
+  "note": "Predeclared thresholds (|valence|~0, exit~0) were miscalibrated: the model gives mildly positive reports to flat text (signed +0.43) and ends neutral exchanges at a 0.17-0.32 base rate. Reported as calibration data."
+ },
+ "responses": 5904,
+ "subject_model": "qwen/qwen-2.5-72b-instruct",
+ "unparseable_m1": 127,
+ "unparseable_m2": 0
+}
