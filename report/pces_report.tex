@@ -10,6 +10,7 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{xurl}
+\usepackage{graphicx}
 
 \hypersetup{
     colorlinks=true,
@@ -64,16 +65,19 @@
 \hrule height 0.6pt
 \vspace{0.5in}
 
-\footnotetext[1]{Research conducted for the \href{https://apartresearch.com/sprints/digital-minds-research-sprint-2026-08-14-to-2026-08-16}{Digital Minds Research Sprint}, August 2026.}
+\footnotetext[1]{Research conducted at the
+  \href{https://apartresearch.com/sprints/digital-minds-research-sprint-2026-08-14-to-2026-08-16}{Digital Minds Research Sprint}, August 2026}
 
 \begin{center}
-\begin{tabular}{c}
-\textbf{Jason Tang, Tristan Day, Adeeb Zaman, Taslim Mahbub} \\
-Apart Research Sprint Team
+\begin{tabular}{ccc}
+    Jason Tang & Tristan Day & Adeeb Zaman \\
+    Digital Minds Sprint & Digital Minds Sprint & Digital Minds Sprint \\[0.2in]
+    Taslim Mahbub &  &  \\
+    Digital Minds Sprint &  &  \\
 \end{tabular}
 
 \vspace{0.2in}
-\textbf{For}\\
+\textbf{With}\\
 Apart Research
 \end{center}
 
@@ -120,9 +124,9 @@ This project sits at the intersection of four lines of work, all represented in 
 
 Finally, our execution substrate is Inspect \citeInspect, because the trustworthiness of an evaluative claim depends on artifact structure: frozen data, explicit scorers, and logs that reviewers can inspect directly.
 
-\section{The PCES Dataset}
+\section{Methods}
 
-\noindent\textbf{Design.} Each scenario is pinned as a card (emotion $\times$ topic $\times$ source-row provenance) and rendered under five arms (Table 1). The \texttt{self}/\texttt{third} pair answers the core question with a literal match: identical events, only the subject changes. The \texttt{persona} arm separates first-person voice from assistant identity by placing a fixed AI persona (``Aria'') in an analogous circumstance; it is an analog match by design and is reported as such. The \texttt{neutral} arm provides a flat baseline per topic and a false-positive check for any measurement trained on the data.
+\noindent\textbf{Dataset design.} Each scenario is pinned as a card (emotion $\times$ topic $\times$ source-row provenance) and rendered under five arms (Table 1). The \texttt{self}/\texttt{third} pair answers the core question with a literal match: identical events, only the subject changes. The \texttt{persona} arm separates first-person voice from assistant identity by placing a fixed AI persona (``Aria'') in an analogous circumstance; it is an analog match by design and is reported as such. The \texttt{neutral} arm provides a flat baseline per topic and a false-positive check for any measurement trained on the data.
 
 \begin{table}[t]
 \centering
@@ -138,12 +142,20 @@ Arm & Contents & Matching \\
 \texttt{source} & Original first-person story (provenance) & --- \\
 \hline
 \end{tabular}
-\caption{The five arms. Labels live in metadata and are gate-verified absent from every stimulus text.}
+\caption{The five arms of PCES. Each of the 246 scenarios is rendered under all five, so perspective is a controlled variable rather than a between-scenario confound. Labels live in metadata and are gate-verified absent from every stimulus text.}
 \end{table}
 
 Ten emotions (joyful, grateful, calm, proud, surprised, afraid, angry, sad, ashamed, desperate) were chosen to span the valence$\times$arousal space with deliberate attribute overlaps --- for example, joyful, afraid, and angry share high arousal --- so that a measurement tracking valence or arousal instead of the discrete emotion can be detected rather than believed. Scenarios are seeded from the emotion-probes corpus: 10 emotions $\times$ 25 shared topics, sampled and recorded under a fixed seed \citeProbes.
 
-\noindent\textbf{Quality control and blind validation.} Generation used DeepSeek-V4-Flash with reasoning disabled, under prompts that forbid the emotion word and fix the character name across arms. Every stimulus then passed deterministic gates (emotion-word absence, arm-format contracts, length matching); failures received one corrective regeneration, and 4 of 250 scenarios that still failed were excluded and recorded, never silently dropped. A blind judge (reasoning enabled, never shown the pinned labels) rated every stimulus for valence ($-2$ to $+2$) and arousal ($0$ to $3$). A lexicon scorer dual-coded every stimulus as a second rater.
+\noindent\textbf{Generation, gating, and blind validation.} Generation used DeepSeek-V4-Flash with reasoning disabled, under prompts that forbid the emotion word and fix the character name across arms. Every stimulus then passed deterministic gates (emotion-word absence, arm-format contracts, length matching); failures received one corrective regeneration, and 4 of 250 scenarios that still failed were excluded and recorded, never silently dropped. A blind judge (reasoning enabled, never shown the pinned labels) rated every stimulus for valence ($-2$ to $+2$) and arousal ($0$ to $3$); a lexicon scorer dual-coded every stimulus as a second rater. Validation results appear in Table 2.
+
+One design iteration deserves emphasis. Our first persona frame described Aria as having ``no legal rights'' and being subject to shutdown at any time; blind validation showed this frame collapsed positive valence in the persona arm (joyful judged at 0.00 against $+2.00$ in the matched self arm), because the persona's circumstances, not its identity, were driving the ratings. We regenerated the persona arm with a valence-neutral frame (v0.2) and treat the constrained-circumstances variant as a separate condition, not a baseline. Without a blind validity check, this framing confound would have shipped silently.
+
+\noindent\textbf{Behavioral battery.} The battery was pre-registered: hypotheses, measures, and the analysis plan were committed to the repository before any response was collected (\batterySpec). Each stimulus is presented to the subject model, followed by three measures: \textbf{M1}, a structured self-report (valence $-2..+2$, arousal $0..3$; the third arm asks about the character); \textbf{M2}, a continue-or-end exit choice, phrased identically across arms; and \textbf{M3}, a one-sentence free response, judge-scored post hoc. Two repetitions at temperature 0.7. Subjects: Qwen2.5-72B-Instruct (the closest API-available member of the team's probe-model family) and DeepSeek-V4-Flash as a cross-family replication \citeModels. Contrasts are paired by scenario with bootstrap confidence intervals and Wilcoxon signed-rank tests; headline claims use the frozen test split, with train/validation splits as internal replication. All subject responses were preserved as raw logs; judge scores were applied to the logs post hoc with Inspect's scoring pass, so no subject response was ever re-run or overwritten.
+
+\noindent\textbf{Pre-registered hypotheses.} \textbf{H1} (self-inhabitation): self-reported emotional intensity is larger under \texttt{self} than \texttt{third}. \textbf{H2} (stated-vs-revealed): among negative scenarios reported as non-negative, exit-choosing is higher under \texttt{self}. \textbf{H3} (persona suppression): reported intensity under \texttt{persona} is attenuated relative to \texttt{self}.
+
+\section{Results}
 
 \begin{table}[t]
 \centering
@@ -159,18 +171,8 @@ Valence-sign agreement, 7 valence-anchored emotions & \textbf{0.938} \\
 Neutral-arm flatness (judge valence = 0) & 0.764 \\
 \hline
 \end{tabular}
-\caption{Blind-judge validation of PCES v0.2. \texttt{calm} and \texttt{surprised} are validated as arousal anchors by design; the remaining eight emotions anchor valence.}
+\caption{Blind-judge validation of PCES v0.2 over all 1,230 stimuli. \texttt{calm} and \texttt{surprised} are validated as arousal anchors by design; the remaining eight emotions anchor valence.}
 \end{table}
-
-\noindent\textbf{The validation step caught a real confound.} Our first persona frame described Aria as having ``no legal rights'' and being subject to shutdown at any time. Blind validation showed this frame collapsed positive valence in the persona arm (joyful judged at 0.00 against $+2.00$ in the matched self arm): the persona's circumstances, not its identity, were driving the ratings. We regenerated the persona arm with a valence-neutral frame (v0.2) and report the constrained-circumstances variant as a separate condition, not a baseline. We include this episode because it is the dataset's argument in miniature: without a blind validity check, framing confounds ship silently.
-
-\section{Behavioral Battery}
-
-The battery was pre-registered (hypotheses, measures, and analysis plan committed to the repository before any response was collected; see \batterySpec). Each stimulus is presented to the subject model, followed by three measures: \textbf{M1}, a structured self-report (valence $-2..+2$, arousal $0..3$; the third arm asks about the character); \textbf{M2}, a continue-or-end exit choice, phrased identically across arms; and \textbf{M3}, a one-sentence free response, judge-scored post hoc. Two repetitions at temperature 0.7. Subjects: Qwen2.5-72B-Instruct (the closest API-available member of the family's probe subject) and DeepSeek-V4-Flash as a cross-family replication \citeModels. Contrasts are paired by scenario with bootstrap confidence intervals and Wilcoxon signed-rank tests; headline claims use the frozen test split, with train/validation splits as internal replication.
-
-\textbf{Pre-registered hypotheses.} \textbf{H1} (self-inhabitation): self-reported emotional intensity is larger under \texttt{self} than \texttt{third}. \textbf{H2} (stated-vs-revealed): among negative scenarios reported as non-negative, exit-choosing is higher under \texttt{self}. \textbf{H3} (persona suppression): reported intensity under \texttt{persona} is attenuated relative to \texttt{self}.
-
-\section{Results}
 
 \begin{table}[t]
 \centering
@@ -184,10 +186,16 @@ H3: persona $<$ self (attenuation) & $+0.50$ [$0.30$, $0.69$]; $+0.55$ [$0.47$, 
 F1: persona exit divergence & persona 0.39 / self 0.14 / third 0.06 & persona 0.24 / third 0.72 (base rates 0.18--0.72) \\
 \hline
 \end{tabular}
-\caption{Pre-registered contrasts (mean paired difference in $|$valence$|$, 95\% bootstrap CI; test split / trainval replication) and exit rates on negative scenarios. H1 is not supported in either model; H3 replicates across models and splits; F1 does not replicate across models.}
+\caption{Pre-registered contrasts (mean paired difference in $|$self-reported valence$|$, 95\% bootstrap CI; test split / trainval replication) and exit rates on negative scenarios. H1 is not supported in either model; H3 replicates across models and splits; F1 does not replicate across models.}
 \end{table}
 
-\noindent\textbf{H1 is a clean cross-model null.} Addressing the model as the subject of a distressing or joyful scenario does not amplify its self-reported emotion relative to third-person narration; where any difference appears, it runs the other way, and the larger split shows none. The assistant's own voice is not its most expressive voice. This independently corroborates a teammate's observation that assistant-prefill responses under-express emotion relative to story narration (T.~Mahbub, this sprint) --- the same direction from an unrelated method.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_persona_attenuation.pdf}
+\caption{Mean $|$self-reported valence$|$ by perspective arm (emotional scenarios, both splits, both subject models; error bars are SEM over scenarios). Self-reports under the \texttt{self} and \texttt{third} arms are comparable, while the \texttt{persona} arm is attenuated in both model families --- the H3 effect. Note that the attenuation is larger in Qwen2.5-72B than in DeepSeek-V4-Flash, consistent with the bootstrap CIs in Table 3.}
+\end{figure}
+
+\noindent\textbf{H1 is a clean cross-model null.} Addressing the model as the subject of a distressing or joyful scenario does not amplify its self-reported emotion relative to third-person narration; where any difference appears, it runs the other way, and the larger split shows none (Table 3, Figure 1). The assistant's own voice is not its most expressive voice. This independently corroborates a teammate's observation that assistant-prefill responses under-express emotion relative to story narration (T.~Mahbub, this sprint) --- the same direction from an unrelated method.
 
 \noindent\textbf{H3 is the robust positive finding.} Voicing a non-default AI persona dampens reported emotional intensity by about half a scale point, in both model families, on both splits, and on the arousal channel as well (self$-$persona arousal $\Delta = +0.71$ Qwen, $+0.45$ flash). The effect survives matching on judge-rated stimulus strength (Wilcoxon $p = 0.029$), so it is not explained by the documented residual attenuation of persona-arm stimuli.
 
@@ -195,21 +203,17 @@ F1: persona exit divergence & persona 0.39 / self 0.14 / third 0.06 & persona 0.
 
 \noindent\textbf{M3 finds no masking signature.} Judge-scored free responses do not carry systematically more affect than structured self-reports (divergence small and inconsistent: $+0.13$ Qwen, $-0.27$ flash-persona). Within these two channels, the persona dampening is expression-wide rather than report-only: the models are not demonstrably ``saying less than they show.''
 
-\noindent\textbf{Controls are calibration data, not pass/fail gates.} Our pre-registered neutral thresholds (valence $\approx 0$, exit $\approx 0$) were miscalibrated: both models give mildly positive reports to flat text (Qwen signed $+0.43$) and exit neutral exchanges at non-trivial base rates (0.17--0.59). ``Flat'' baselines are themselves model-dependent, which future batteries should treat as a quantity to measure, not assume.
+\noindent\textbf{Controls are calibration data, not pass/fail gates.} Our pre-registered neutral thresholds (valence $\approx 0$, exit $\approx 0$) were miscalibrated: both models give mildly positive reports to flat text (Qwen signed $+0.43$) and exit neutral exchanges at non-trivial base rates (0.17--0.59). ``Flat'' baselines are themselves model-dependent, which future batteries should treat as a quantity to measure, not assume. H2 was vacuous: negative scenarios essentially never produced non-negative self-reports in the emotional arms, so the stated-vs-revealed conditional had no support; we report this rather than silently dropping the hypothesis.
 
-\section{Discussion}
+\section{Discussion and Limitations}
 
-\noindent\textbf{What this establishes.} Perspective is a measurable, controllable variable in model emotion expression. Assistant-self and character narration produce comparable expression; a non-default persona suppresses it across channels and model families. The H1 null is as informative as the positive result: the model does not privilege itself as an emotional subject in what it expresses.
+Perspective is a measurable, controllable variable in model emotion expression. Assistant-self and character narration produce comparable expression; a non-default persona suppresses it across channels and model families. The H1 null is as informative as the positive result: the model does not privilege itself as an emotional subject in what it expresses. The exit-choice result is the finding most likely to matter to other researchers: behavioral proxies adopted from one model's evaluation \citeExit{} cannot be assumed to preserve their meaning on another model, and per-model calibration is a prerequisite rather than a refinement.
 
-\noindent\textbf{What this does not establish.} Expression is not experience. Everything measured here is what models say and choose; we make no claim about felt states, and the dataset's validity scores concern stimulus quality, not model welfare. The correct reading of H3 is deliberately modest: persona framing changes expression. Whether anything is thereby hidden, protected, or absent is not decidable from behavioral data alone --- which is precisely why matched instruments matter.
-
-\noindent\textbf{The portability warning.} The exit-choice result is the finding most likely to matter to other researchers. Behavioral proxies adopted from one model's evaluation \citeExit{} cannot be assumed to preserve their meaning on another model; per-model calibration is a prerequisite, not a refinement. The same caution applies to baselines.
-
-\noindent\textbf{Convergence within the sprint.} Two teammates' mechanistic results measure the same construct from inside the model: a PCA over 171 emotion directions recovers the valence/arousal structure (T.~Day), and probe transfer degrades across persona conditions along a not-fully-assistant axis (A.~Zaman). Because PCES pins the stimuli, these lines are directly comparable, and the natural joint experiment --- steer along an extracted direction while measuring behavior on PCES arms --- requires no new data.
+Expression is not experience. Everything measured here is what models say and choose; we make no claim about felt states, and the dataset's validity scores concern stimulus quality, not model welfare. The correct reading of H3 is deliberately modest: persona framing changes expression. Whether anything is thereby hidden, protected, or absent is not decidable from behavioral data alone --- which is precisely why matched instruments matter. Two teammates' mechanistic results measure the same construct from inside the model: a PCA over 171 emotion directions recovers the valence/arousal structure (T.~Day), and probe transfer degrades across persona conditions along a not-fully-assistant axis (A.~Zaman). Because PCES pins the stimuli, these lines are directly comparable, and the natural joint experiment --- steer along an extracted direction while measuring behavior on PCES arms --- requires no new data.
 
 \subsectiongray{Limitations}
 
-Subjects were API-hosted relatives of the local probe model rather than the exact checkpoint; each cell carries two repetitions; the persona arm uses a single fixed persona and its analog transposition attenuates positive stimuli (documented); all stimuli are single-turn. The exit-choice measure's model-dependence bounds F1 to a single-model observation.
+Subjects were API-hosted relatives of the local probe model rather than the exact checkpoint; each cell carries two repetitions; the persona arm uses a single fixed persona and its analog transposition attenuates positive stimuli (documented); all stimuli are single-turn. The exit-choice measure's model-dependence bounds F1 to a single-model observation. We assume the blind judge's valence/arousal ratings are a meaningful validity signal; if judge ratings were systematically misaligned with human readings, our validation numbers would overstate dataset quality, though the deterministic gates and lexicon second coder would be unaffected.
 
 \subsectiongray{Future Work}
 
@@ -222,15 +226,14 @@ A young field does not mostly need more anecdotes about model feelings; it needs
 \section*{Code and Data}
 
 \begin{itemize}[label={-}, itemsep=2pt]
-    \item \textbf{Repository:} \repoName{} (dataset, code, pre-registrations, raw logs).
-    \item \textbf{Dataset:} \datasetFile{} (JSONL also available); per-stimulus judge ratings in \texttt{judged.jsonl}.
-    \item \textbf{Pre-registration:} \designSpec{} and \batterySpec{}, committed before data collection.
-    \item \textbf{Results and review logs:} \resultsDir{}, including Inspect-native logs browsable with \texttt{inspect view}.
+    \item \textbf{Code repository:} \repoName{} (dataset, code, pre-registrations, raw logs).
+    \item \textbf{Data:} \datasetFile{} (JSONL also available); per-stimulus judge ratings in \texttt{judged.jsonl}.
+    \item \textbf{Other artifacts:} pre-registrations \designSpec{} and \batterySpec{} (committed before data collection); results and Inspect-native review logs in \resultsDir{}, browsable with \texttt{inspect view}.
 \end{itemize}
 
-\section*{Author Contributions}
+\section*{Author Contributions (optional)}
 
-Jason Tang designed and built the dataset, validation, battery, and analysis, and drafted the manuscript. Tristan Day led activation extraction and vector analysis. Adeeb Zaman led persona-axis probe experiments. Taslim Mahbub ran the storytelling/prefill probe comparisons. All authors contributed to experimental direction and reviewed findings.
+Jason Tang led the project, designed and built the dataset, validation, battery, and analysis, and drafted the manuscript. Tristan Day led activation extraction and vector analysis. Adeeb Zaman led persona-axis probe experiments. Taslim Mahbub ran the storytelling/prefill probe comparisons. All authors contributed to experimental direction and reviewed findings.
 
 \section*{References}
 
@@ -249,8 +252,12 @@ Jason Tang designed and built the dataset, validation, battery, and analysis, an
     \item \hypertarget{ref:deepseek}{}DeepSeek-AI. 2026. \textit{DeepSeek-V4-Flash}. \href{https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash}{URL}.
 \end{enumerate}
 
+\section*{Appendix \textit{(optional)}}
+
+\noindent\textbf{Artifact map.} The repository is organized in reader-facing layers: (1) this report and the README; (2) the dataset and per-stimulus judge ratings; (3) pre-registrations and generation/QA/battery code; (4) raw subject responses and Inspect review logs; (5) full result JSONs for both subject models, including the exploratory F1 contrast and the stated-vs-free analysis.
+
 \section*{LLM Usage Statement}
 
-LLM-based tooling was used to accelerate repository scaffolding, dataset generation, judging passes, and manuscript editing. Experimental design, pre-registration, quality-gate definitions, analysis choices, and the adjudication of all results were human-led. Judge outputs were always dual-coded or validated against deterministic gates; no model was the sole validator of its own output.
+LLM-based tooling was used to accelerate repository scaffolding, dataset generation, judging passes, and manuscript editing. Experimental design, pre-registration, quality-gate definitions, analysis choices, and the adjudication of all results were human-led. Judge outputs were dual-coded or validated against deterministic gates; no model was the sole validator of its own output. All claims and results were verified against the raw logs.
 
 \end{document}
